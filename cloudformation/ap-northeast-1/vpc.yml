@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template for creating a VPC with subnets.
+
+Parameters:
+  VpcCidrBlock:
+    Type: String
+    Default: "10.0.0.0/16"
+    Description: CIDR block for the VPC
+
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidrBlock
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  LambdaSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.1.0/24"
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      Tags:
+        - Key: Name
+          Value: LambdaSubnet1
+
+  ECSSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.3.0/24"
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      Tags:
+        - Key: Name
+          Value: ECSSubnet1
+
+  EC2Subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: "10.0.5.0/24"
+      AvailabilityZone: !Select [ 0, !GetAZs "" ]
+      Tags:
+        - Key: Name
+          Value: EC2Subnet1
+
+Outputs:
+  VpcId:
+    Value: !Ref MyVPC
+    Export:
+      Name: VPCId
+  
+  LambdaSubnet:
+    Value: !Ref LambdaSubnet1
+    Export:
+      Name: LambdaSubnet
+
+  ECSSubnet:
+    Value: !Ref ECSSubnet1
+    Export:
+      Name: ECSSubnet
+
+  EC2Subnet:
+    Value: !Ref EC2Subnet1
+    Export:
+      Name: EC2Subnet
+    
